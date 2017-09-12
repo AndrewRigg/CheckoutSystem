@@ -11,19 +11,23 @@ QikServe checkout software
 
 import java.util.Date;
 import java.util.ArrayList;
+import java.text.DecimalFormat;
 
 public class Checkout{
-	private ProductList products;
+	DecimalFormat df = new DecimalFormat("#.00");
+	private ProductList pl;
 	private ArrayList<Item> shoppingList;
 	private double totalOriginalCost = 0.0;
 	private double totalDiscountCost = 0.0;
 	private double totalSavings = 0.0;
+	
+	
 	private Date date;
 	private int numberOfItems;
 	
 	public Checkout(){
 		shoppingList = new ArrayList<Item>();
-		products = new ProductList();
+		pl = new ProductList();
 		this.date = new Date();
 	}
 	
@@ -52,6 +56,7 @@ public class Checkout{
 		System.out.println("\n\nQIKMARKET CHECKOUT RECEIPT");
 		System.out.println(date.toString());
 		System.out.println("\n\nTotal of " + numberOfItems + " items");
+		ArrayList<Item> products = pl.getProducts();
 		for(Item item: shoppingList){
 			System.out.print("\nItem " + (shoppingList.indexOf(item)+1) + ": " + item.getName());
 			if(item.getQuantity() > 1){
@@ -60,21 +65,22 @@ public class Checkout{
 			totalOriginalCost += item.getPrice() * item.getQuantity();
 			totalDiscountCost += item.getQuantity() % item.getPromotionQuantity() * item.getPrice() 
 				+ (item.getQuantity() - (item.getQuantity() % item.getPromotionQuantity())) * item.getPromotionPrice();
-			item.setStock(item.getStock()-item.getQuantity());
+			Item prod = products.get(products.indexOf(item));
+			prod.setStock(prod.getStock() - item.getQuantity());
 		}
 		totalSavings = totalOriginalCost - totalDiscountCost;
 		totalOriginalCost = (double)Math.round(totalOriginalCost * 1000d) / 1000d;
 		totalDiscountCost = (double)Math.round(totalDiscountCost * 1000d) / 1000d;
 		totalSavings = (double)Math.round(totalSavings * 1000d) / 1000d;
-		System.out.println("\n\nTotal cost:  \u00A3" + totalDiscountCost);
-		System.out.println("Today you have saved  \u00A3" + totalSavings);
+		System.out.println("\n\nTotal cost:  \u00A3" + df.format(totalDiscountCost));
+		System.out.println("Today you have saved  \u00A3" + df.format(totalSavings));
 		System.out.println("\nThank you for shopping at QikMarket\nHave a nice day!");
-		products.updateStock(shoppingList);
+		pl.updateStock(products);
 	}
 	
 	public void addItemsToShoppingList(String name, int quantity){
-		if(products.getItemFromProductList(name) != null){
-			Item newItem = products.getItemFromProductList(name);
+		if(pl.getItemFromProductList(name) != null){
+			Item newItem = pl.getItemFromProductList(name);
 			newItem.setQuantity(quantity);
 			shoppingList.add(newItem);
 			shoppingList = compileList(shoppingList);
@@ -83,15 +89,10 @@ public class Checkout{
 	
 	public static void main (String [] args){
 		Checkout checkout = new Checkout();		
-		checkout.addItemsToShoppingList("Biscuits", 3);
 		checkout.addItemsToShoppingList("Juice", 2);
-		checkout.addItemsToShoppingList("Microwave Meal", 5);
-		checkout.addItemsToShoppingList("Chicken", 4);
+		checkout.addItemsToShoppingList("Microwave Meal", 1);
 		checkout.addItemsToShoppingList("Steak", 1);
 		checkout.addItemsToShoppingList("Biscuits", 3);
-		checkout.addItemsToShoppingList("Microwave Meal", 5);
-		checkout.addItemsToShoppingList("Chicken", 4);
-		checkout.addItemsToShoppingList("Steak", 1);
 		checkout.processItems(checkout.shoppingList);
 	}
 }

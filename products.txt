@@ -1,9 +1,9 @@
-NAME						PRICE			STOCK		PROMOTION_QUANTITY		PROMOTION_PRICE
-Apples						0.37			100				4						0.25
-Biscuits					1.29			120				1						1.29
-Juice						0.53			150				3						0.3533333333
-Lettuce						1.05			20				1						1.05
-Microwave Meal				3.50			15				2						2.50
-Pizza						5.00			10				3						4.00
-Pork Chops					4.01			12				2						3.50
-Steak						8.49			14				2						6.00
+NAME					PRICE					STOCK					PROMOTION_QUANTITY		PROMOTION_PRICE			
+Apples					0.37					100						4						0.25					
+Biscuits				1.29					117						1						1.29					
+Juice					0.53					138						3						0.3533333333			
+Lettuce					1.05					20						1						1.05					
+Microwave Meal			3.5						14						2						2.5						
+Pizza					5.0						10						3						4.0						
+Pork Chops				4.01					12						2						3.5						
+Steak					8.49					9						2						6.0						
