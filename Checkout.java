@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.text.DecimalFormat;
 
 public class Checkout{
-	DecimalFormat df = new DecimalFormat("#.00");
+	DecimalFormat df = new DecimalFormat("#0.00");
 	private ProductList pl;
 	private ArrayList<Item> shoppingList;
 	private double totalOriginalCost = 0.0;

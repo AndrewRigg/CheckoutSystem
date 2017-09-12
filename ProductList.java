@@ -10,7 +10,6 @@ public class ProductList{
 	private String [] headers = {"NAME", "PRICE", "STOCK", "PROMOTION_QUANTITY", "PROMOTION_PRICE"};
 	
 	public ProductList(){
-		DecimalFormat df = new DecimalFormat("#.00");
 		products = new ArrayList<Item>();
 		try{
 			FileReader fileReader = new FileReader(new File("products.txt"));
@@ -81,9 +80,6 @@ public class ProductList{
 		}catch(IOException exception){
 			System.err.println("No file found!");
 		}
-		
-		File here = new File(".");
-		System.out.println(here.getAbsolutePath());
 		if(!original_stock.delete()){
 			System.err.println("Could not delete file");
 		}
