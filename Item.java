@@ -1,11 +1,15 @@
+/**
+Class for creating items in supermarket 
+*/
+
 public class Item{
 	
 	private String name;				/**Name of the product*/
 	private double price;				/**Price of the product*/
 	private int stock;					/**Number of available stock*/
-	private int quantity;				/**Desired quantity of this product*/
-	private int promotionQuantity;		/**Quantity of products required to activate promotion*/
-	private double promotionPrice;		/**The relative price of the product while on promotion*/
+	private int quantity;				/**Desired quantity of product*/
+	private int promotionQuantity;		/**Quantity required for promotion*/
+	private double promotionPrice;		/**Relative price while on promotion*/
 	
 	public Item(String name, double price, int stock, int promotionQuantity, double promotionPrice){
 		this.name = name;

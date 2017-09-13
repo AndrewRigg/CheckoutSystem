@@ -15,7 +15,7 @@ import java.text.DecimalFormat;
 
 public class Checkout{
 	DecimalFormat df = new DecimalFormat("#0.00");
-	private ProductList pl;
+	private Products products;
 	private ArrayList<Item> shoppingList;
 	private double totalOriginalCost = 0.0;
 	private double totalDiscountCost = 0.0;
@@ -27,22 +27,26 @@ public class Checkout{
 	
 	public Checkout(){
 		shoppingList = new ArrayList<Item>();
-		pl = new ProductList();
+		products = new Products();
 		this.date = new Date();
 	}
 	
 	/**
-	Update the list to show quantities of each product
+	Update the shopping list to show quantities of each product
 	This should be done after each item is scanned
 	*/
 	public ArrayList<Item> compileList(ArrayList<Item> shoppingList){
 		numberOfItems = shoppingList.size();
 		ArrayList<Item> temp = new ArrayList<Item>();
 		for(Item item: shoppingList){
-			if(temp.contains(item)){
-				Item thisItem = temp.get(temp.indexOf(item));
-				thisItem.setQuantity(thisItem.getQuantity() + item.getQuantity());
-			}else{
+			boolean found = false;
+			for(Item tempItem: temp){
+				if(tempItem.getName().equals(item.getName())){
+					tempItem.setQuantity(tempItem.getQuantity() + item.getQuantity());
+					found = true;
+				}
+			}
+			if(!found){
 				temp.add(item);
 			}
 		}
@@ -50,23 +54,29 @@ public class Checkout{
 	}
 	
 	/**
-	Process the items from the compiled list
+	Process the items from the compiled list and prints
+	out the receipt (to the console) this should show the
+	total price, the customer savings and any unavailable items
 	*/
 	public void processItems(ArrayList<Item> shoppingList){
 		System.out.println("\n\nQIKMARKET CHECKOUT RECEIPT");
 		System.out.println(date.toString());
 		System.out.println("\n\nTotal of " + numberOfItems + " items");
-		ArrayList<Item> products = pl.getProducts();
 		for(Item item: shoppingList){
-			System.out.print("\nItem " + (shoppingList.indexOf(item)+1) + ": " + item.getName());
-			if(item.getQuantity() > 1){
-				System.out.print(" x" + item.getQuantity());
+			Item prod = products.getItemFromProductList(item.getName());
+			if(prod != null){
+				System.out.print("\nItem " + (shoppingList.indexOf(item)+1) + ": " + item.getName());
+				if(item.getQuantity() > 1){
+					System.out.print(" x" + item.getQuantity());
+				}
+				totalOriginalCost += item.getPrice() * item.getQuantity();
+				totalDiscountCost += item.getQuantity() % item.getPromotionQuantity() * item.getPrice() 
+					+ (item.getQuantity() - (item.getQuantity() % item.getPromotionQuantity())) * item.getPromotionPrice();
+				item.setStock(item.getStock() - item.getQuantity());
+			}else{
+				shoppingList.remove(item);
+				System.err.println("Product not listed.");
 			}
-			totalOriginalCost += item.getPrice() * item.getQuantity();
-			totalDiscountCost += item.getQuantity() % item.getPromotionQuantity() * item.getPrice() 
-				+ (item.getQuantity() - (item.getQuantity() % item.getPromotionQuantity())) * item.getPromotionPrice();
-			Item prod = products.get(products.indexOf(item));
-			prod.setStock(prod.getStock() - item.getQuantity());
 		}
 		totalSavings = totalOriginalCost - totalDiscountCost;
 		totalOriginalCost = (double)Math.round(totalOriginalCost * 1000d) / 1000d;
@@ -74,13 +84,33 @@ public class Checkout{
 		totalSavings = (double)Math.round(totalSavings * 1000d) / 1000d;
 		System.out.println("\n\nTotal cost:  \u00A3" + df.format(totalDiscountCost));
 		System.out.println("Today you have saved  \u00A3" + df.format(totalSavings));
-		System.out.println("\nThank you for shopping at QikMarket\nHave a nice day!");
-		pl.updateStock(products);
+		System.out.println("\nThank you for shopping at QikMarket\nHave a nice day!\n\n\n");
+		products.updateStock(shoppingList);
 	}
 	
+	/**
+	Adds items by quantity to the shopping list (e.g. when a number 
+	is typed before scanning an item to give quantity)
+	*/
 	public void addItemsToShoppingList(String name, int quantity){
-		if(pl.getItemFromProductList(name) != null){
-			Item newItem = pl.getItemFromProductList(name);
+		addItems(name, quantity);
+	}
+		
+	/**
+	Override method which adds a single item (e.g. single item
+	scanned at the checkout)
+	*/
+	public void addItemsToShoppingList(String name){
+		addItems(name, 1);
+	}
+	
+	/**
+	Gets the item from the product database (in this case a text file) 
+	and adds it to the shopping list
+	*/
+	public void addItems(String name, int quantity){
+			if(products.getItemFromProductList(name) != null){
+			Item newItem = products.getItemFromProductList(name);
 			newItem.setQuantity(quantity);
 			shoppingList.add(newItem);
 			shoppingList = compileList(shoppingList);
@@ -91,8 +121,15 @@ public class Checkout{
 		Checkout checkout = new Checkout();		
 		checkout.addItemsToShoppingList("Juice", 2);
 		checkout.addItemsToShoppingList("Microwave Meal", 1);
-		checkout.addItemsToShoppingList("Steak", 1);
+		checkout.addItemsToShoppingList("Steak");
+		checkout.addItemsToShoppingList("Steak");
+		checkout.addItemsToShoppingList("Cucumber");
 		checkout.addItemsToShoppingList("Biscuits", 3);
+		checkout.addItemsToShoppingList("Cucumber");
+		checkout.addItemsToShoppingList("Biscuits", 1);
+		checkout.addItemsToShoppingList("Biscuits", 6);
+		checkout.addItemsToShoppingList("Microwave Meal");
+		checkout.addItemsToShoppingList("Microwave Meal");
 		checkout.processItems(checkout.shoppingList);
 	}
 }
