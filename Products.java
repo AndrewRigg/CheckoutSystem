@@ -1,6 +1,6 @@
 /**
 Class to retrieve items from the product list database (textfile)
-Has method to updates the database when items are processed
+Has method to update the database when items are processed
 */
 
 import java.util.ArrayList;
