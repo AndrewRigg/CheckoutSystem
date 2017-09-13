@@ -87,11 +87,21 @@ public class Checkout{
 		}
 	}
 	
+		
+	public void addItemsToShoppingList(String name){
+		if(pl.getItemFromProductList(name) != null){
+			Item newItem = pl.getItemFromProductList(name);
+			newItem.setQuantity(1);
+			shoppingList.add(newItem);
+			shoppingList = compileList(shoppingList);
+		}
+	}
+	
 	public static void main (String [] args){
 		Checkout checkout = new Checkout();		
 		checkout.addItemsToShoppingList("Juice", 2);
 		checkout.addItemsToShoppingList("Microwave Meal", 1);
-		checkout.addItemsToShoppingList("Steak", 1);
+		checkout.addItemsToShoppingList("Steak");
 		checkout.addItemsToShoppingList("Biscuits", 3);
 		checkout.processItems(checkout.shoppingList);
 	}
